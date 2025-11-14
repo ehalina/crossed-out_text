@@ -1,0 +1,47 @@
+{
+  "manifest_version": 3,
+  "name": "Facebook Зачеркнутый Текст",
+  "version": "1.0",
+  "description": "Простое расширение для вставки зачеркнутого текста в посты Facebook",
+  "permissions": [
+    "activeTab",
+    "clipboardWrite",
+    "scripting"
+  ],
+  "host_permissions": [
+    "https://www.facebook.com/*"
+  ],
+  "content_scripts": [
+    {
+      "matches": ["https://www.facebook.com/*"],
+      "js": ["content.js"],
+      "css": ["styles.css"]
+    }
+  ],
+  "action": {
+    "default_popup": "popup.html",
+    "default_icon": {
+      "16": "icon16.png",
+      "48": "icon48.png",
+      "128": "icon128.png"
+    }
+  },
+  "icons": {
+    "16": "icon16.png",
+    "48": "icon48.png",
+    "128": "icon128.png"
+  },
+  "commands": {
+    "insert-strikethrough": {
+      "suggested_key": {
+        "default": "Ctrl+Shift+S",
+        "mac": "Command+Shift+S"
+      },
+      "description": "Вставить зачеркнутый текст"
+    }
+  },
+  "background": {
+    "service_worker": "background.js"
+  }
+}
+

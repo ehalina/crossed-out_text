@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Генератор иконок</title>
+</head>
+<body>
+  <h2>Генератор иконок для расширения</h2>
+  <p>Кликните на иконку, чтобы скачать</p>
+  
+  <canvas id="icon16" width="16" height="16"></canvas>
+  <canvas id="icon48" width="48" height="48"></canvas>
+  <canvas id="icon128" width="128" height="128"></canvas>
+  
+  <script>
+    function drawIcon(canvas, size) {
+      const ctx = canvas.getContext('2d');
+      
+      // Синий фон (цвет Facebook)
+      ctx.fillStyle = '#1877f2';
+      ctx.fillRect(0, 0, size, size);
+      
+      // Белый зачеркнутый текст
+      ctx.strokeStyle = 'white';
+      ctx.lineWidth = Math.max(2, size / 8);
+      ctx.lineCap = 'round';
+      
+      const centerY = size / 2;
+      const padding = size / 4;
+      ctx.beginPath();
+      ctx.moveTo(padding, centerY);
+      ctx.lineTo(size - padding, centerY);
+      ctx.stroke();
+    }
+    
+    function setupCanvas(id, size) {
+      const canvas = document.getElementById(id);
+      drawIcon(canvas, size);
+      
+      canvas.style.border = '1px solid #ccc';
+      canvas.style.margin = '10px';
+      canvas.style.cursor = 'pointer';
+      
+      canvas.addEventListener('click', () => {
+        canvas.toBlob((blob) => {
+          const url = URL.createObjectURL(blob);
+          const a = document.createElement('a');
+          a.href = url;
+          a.download = `icon${size}.png`;
+          a.click();
+          URL.revokeObjectURL(url);
+        });
+      });
+    }
+    
+    setupCanvas('icon16', 16);
+    setupCanvas('icon48', 48);
+    setupCanvas('icon128', 128);
+  </script>
+</body>
+</html>
+

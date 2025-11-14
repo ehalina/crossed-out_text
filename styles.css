@@ -1,0 +1,5 @@
+/* Стили для зачеркнутого текста в Facebook */
+s {
+  text-decoration: line-through;
+}
+
