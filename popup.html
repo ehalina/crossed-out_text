@@ -41,6 +41,7 @@
       padding-top: 8px;
       border-top: 1px solid #eee;
       text-align: center;
+      line-height: 1.8;
     }
     .hotkey kbd {
       background: #f0f0f0;
@@ -57,9 +58,10 @@
   <input type="text" id="textInput" placeholder="Введите текст для зачеркивания">
   <button id="insertBtn">Вставить зачеркнутый текст</button>
   <div class="info">Текст будет вставлен в активное поле ввода</div>
+  <div class="info" style="font-size: 10px; color: #999; margin-top: 5px;">Безопасная вставка через Unicode символ U+0336 без скриптов</div>
   <div class="hotkey">
-    Горячие клавиши: <kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>S</kbd><br>
-    <span style="font-size: 10px; color: #999;">(Mac: <kbd>Cmd</kbd>+<kbd>Shift</kbd>+<kbd>S</kbd>)</span>
+    <div>Горячие клавиши: <kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>S</kbd></div>
+    <div style="font-size: 10px; color: #999; margin-top: 4px;">(Mac: <kbd>Cmd</kbd>+<kbd>Shift</kbd>+<kbd>S</kbd>)</div>
   </div>
   <script src="popup.js"></script>
 </body>

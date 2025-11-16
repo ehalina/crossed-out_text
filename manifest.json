@@ -1,8 +1,8 @@
 {
   "manifest_version": 3,
   "name": "Facebook Зачеркнутый Текст",
-  "version": "1.0",
-  "description": "Простое расширение для вставки зачеркнутого текста в посты Facebook",
+  "version": "1.0.1",
+  "description": "Простое расширение для вставки зачеркнутого текста в посты Facebook. Безопасная вставка через Unicode символ U+0336 без скриптов",
   "permissions": [
     "activeTab",
     "clipboardWrite",

@@ -103,37 +103,68 @@ function findAndInsert(text) {
 
   let editor = null;
 
-  // Ищем активное поле
-  for (const selector of selectors) {
-    const elements = document.querySelectorAll(selector);
-    for (const el of elements) {
-      if (el.isContentEditable) {
-        const rect = el.getBoundingClientRect();
-        // Проверяем что элемент видим и достаточно большой
-        if (rect.width > 50 && rect.height > 10 && el.offsetParent !== null) {
-          // Проверяем что это поле ввода поста (не комментарий)
-          const testId = el.getAttribute('data-testid') || '';
-          const ariaLabel = el.getAttribute('aria-label') || '';
-          const parent = el.closest('[role="dialog"], [data-testid*="post"], form');
-          
-          // Если есть data-testid со status или это в диалоге, или достаточно широкое
-          if (testId.includes('status') || parent || rect.width > 200) {
-            editor = el;
-            break;
+  // Сначала ищем внутри активного диалога/модального окна (приоритет)
+  const activeDialog = document.querySelector('[role="dialog"]:not([aria-hidden="true"])');
+  if (activeDialog) {
+    for (const selector of selectors) {
+      const elements = activeDialog.querySelectorAll(selector);
+      for (const el of elements) {
+        if (el.isContentEditable) {
+          const rect = el.getBoundingClientRect();
+          // Проверяем что элемент видим, в viewport и достаточно большой
+          if (rect.width > 50 && rect.height > 10 && el.offsetParent !== null &&
+              rect.top >= 0 && rect.left >= 0 && 
+              rect.bottom <= window.innerHeight && rect.right <= window.innerWidth) {
+            const testId = el.getAttribute('data-testid') || '';
+            if (testId.includes('status') || testId.includes('mentions-input')) {
+              editor = el;
+              break;
+            }
           }
         }
       }
+      if (editor) break;
     }
-    if (editor) break;
   }
 
-  // Если не нашли, берем самое большое видимое contenteditable
+  // Если не нашли в диалоге, ищем в основном контенте
+  if (!editor) {
+    for (const selector of selectors) {
+      const elements = document.querySelectorAll(selector);
+      for (const el of elements) {
+        if (el.isContentEditable) {
+          const rect = el.getBoundingClientRect();
+          // Проверяем что элемент видим, в viewport и достаточно большой
+          if (rect.width > 50 && rect.height > 10 && el.offsetParent !== null &&
+              rect.top >= 0 && rect.left >= 0 && 
+              rect.bottom <= window.innerHeight && rect.right <= window.innerWidth) {
+            // Проверяем что это поле ввода поста (не комментарий)
+            const testId = el.getAttribute('data-testid') || '';
+            const ariaLabel = el.getAttribute('aria-label') || '';
+            const parent = el.closest('[role="dialog"], [data-testid*="post"], form');
+            
+            // Если есть data-testid со status или это в диалоге, или достаточно широкое
+            if (testId.includes('status') || parent || rect.width > 200) {
+              editor = el;
+              break;
+            }
+          }
+        }
+      }
+      if (editor) break;
+    }
+  }
+
+  // Если не нашли, берем самое большое видимое contenteditable в viewport
   if (!editor) {
     const allEditable = document.querySelectorAll('div[contenteditable="true"]');
     let maxWidth = 0;
     for (const el of allEditable) {
       const rect = el.getBoundingClientRect();
-      if (rect.width > maxWidth && rect.height > 10 && el.offsetParent !== null) {
+      // Проверяем что элемент в viewport
+      if (rect.width > maxWidth && rect.height > 10 && el.offsetParent !== null &&
+          rect.top >= 0 && rect.left >= 0 && 
+          rect.bottom <= window.innerHeight && rect.right <= window.innerWidth) {
         maxWidth = rect.width;
         editor = el;
       }
@@ -144,12 +175,29 @@ function findAndInsert(text) {
     return false;
   }
 
-  // Фокусируемся на поле
-  editor.focus();
-  editor.click();
+  // Сохраняем текущую позицию прокрутки
+  const scrollX = window.scrollX;
+  const scrollY = window.scrollY;
+
+  // Фокусируемся на поле без прокрутки
+  editor.focus({ preventScroll: true });
+  
+  // Восстанавливаем позицию прокрутки
+  window.scrollTo(scrollX, scrollY);
+  
+  // Кликаем без прокрутки
+  const clickEvent = new MouseEvent('click', {
+    bubbles: true,
+    cancelable: true,
+    view: window
+  });
+  editor.dispatchEvent(clickEvent);
   
   // Небольшая задержка для фокуса
   setTimeout(() => {
+    // Восстанавливаем позицию прокрутки еще раз
+    window.scrollTo(scrollX, scrollY);
+    
     // Устанавливаем курсор в конец
     const selection = window.getSelection();
     const range = document.createRange();
@@ -171,11 +219,13 @@ function findAndInsert(text) {
     // Метод 1: Пробуем execCommand insertText с Unicode символами
     if (document.execCommand('insertText', false, strikethroughText)) {
       editor.dispatchEvent(new Event('input', { bubbles: true, cancelable: true }));
+      // Восстанавливаем позицию прокрутки после вставки
+      window.scrollTo(scrollX, scrollY);
       return;
     }
 
     // Метод 2: Fallback - вставляем через события клавиатуры
-    insertTextViaKeyboard(editor, text);
+    insertTextViaKeyboard(editor, text, scrollX, scrollY);
   }, 50);
 
   return true;
@@ -199,13 +249,18 @@ function getTextNodesIn(node) {
   return textNodes;
 }
 
-function insertTextViaKeyboard(editor, text) {
+function insertTextViaKeyboard(editor, text, scrollX, scrollY) {
   // Добавляем Unicode символы зачеркивания
   const strikethroughText = addStrikethroughUnicode(text);
   
   // Вставляем текст посимвольно через события
   for (let i = 0; i < strikethroughText.length; i++) {
     setTimeout(() => {
+      // Восстанавливаем позицию прокрутки перед каждым символом
+      if (scrollX !== undefined && scrollY !== undefined) {
+        window.scrollTo(scrollX, scrollY);
+      }
+      
       const char = strikethroughText[i];
       const keyEvent = new KeyboardEvent('keydown', {
         key: char,
@@ -236,6 +291,11 @@ function insertTextViaKeyboard(editor, text) {
       }
       
       editor.dispatchEvent(new Event('input', { bubbles: true }));
+      
+      // Восстанавливаем позицию прокрутки после вставки символа
+      if (scrollX !== undefined && scrollY !== undefined) {
+        window.scrollTo(scrollX, scrollY);
+      }
     }, i * 5);
   }
 }
