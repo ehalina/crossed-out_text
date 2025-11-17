@@ -5,7 +5,6 @@
   "description": "Простое расширение для вставки зачеркнутого текста в посты Facebook. Безопасная вставка через Unicode символ U+0336 без скриптов",
   "permissions": [
     "activeTab",
-    "clipboardWrite",
     "scripting"
   ],
   "host_permissions": [

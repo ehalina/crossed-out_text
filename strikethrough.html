@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Зачеркивание текста для Facebook</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      padding: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .container {
+      background: white;
+      border-radius: 16px;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+      padding: 30px;
+      max-width: 600px;
+      width: 100%;
+    }
+
+    h1 {
+      color: #333;
+      margin-bottom: 25px;
+      font-size: 24px;
+      text-align: center;
+    }
+
+    .field-group {
+      margin-bottom: 20px;
+    }
+
+    label {
+      display: block;
+      color: #555;
+      margin-bottom: 8px;
+      font-size: 14px;
+      font-weight: 500;
+    }
+
+    textarea {
+      width: 100%;
+      padding: 12px;
+      border: 2px solid #e0e0e0;
+      border-radius: 8px;
+      font-size: 16px;
+      font-family: inherit;
+      resize: vertical;
+      min-height: 80px;
+      transition: border-color 0.3s;
+    }
+
+    textarea:focus {
+      outline: none;
+      border-color: #667eea;
+    }
+
+    #output {
+      background: #f8f9fa;
+      color: #333;
+      font-size: 16px;
+      line-height: 1.6;
+    }
+
+    .button-group {
+      display: flex;
+      gap: 10px;
+      margin-top: 20px;
+    }
+
+    button {
+      flex: 1;
+      padding: 14px 24px;
+      border: none;
+      border-radius: 8px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+
+    #copyBtn {
+      background: #667eea;
+      color: white;
+    }
+
+    #copyBtn:hover {
+      background: #5568d3;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+    }
+
+    #copyBtn:active {
+      transform: translateY(0);
+    }
+
+    #copyBtn.copied {
+      background: #10b981;
+    }
+
+    .info {
+      margin-top: 20px;
+      padding: 12px;
+      background: #e3f2fd;
+      border-radius: 8px;
+      font-size: 13px;
+      color: #1976d2;
+      line-height: 1.5;
+    }
+
+    @media (max-width: 600px) {
+      body {
+        padding: 10px;
+      }
+
+      .container {
+        padding: 20px;
+        border-radius: 12px;
+      }
+
+      h1 {
+        font-size: 20px;
+        margin-bottom: 20px;
+      }
+
+      textarea {
+        font-size: 14px;
+        min-height: 70px;
+      }
+
+      button {
+        padding: 12px 20px;
+        font-size: 14px;
+      }
+
+      .button-group {
+        flex-direction: column;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Зачеркивание текста для Facebook</h1>
+    
+    <div class="field-group">
+      <label for="input">Введите текст:</label>
+      <textarea id="input" placeholder="Введите текст, который нужно зачеркнуть..."></textarea>
+    </div>
+
+    <div class="field-group">
+      <label for="output">Зачеркнутый текст:</label>
+      <textarea id="output" readonly placeholder="Зачеркнутый текст появится здесь..."></textarea>
+    </div>
+
+    <div class="button-group">
+      <button id="copyBtn">Копировать</button>
+    </div>
+
+    <div class="info">
+      💡 Зачеркнутый текст готов для вставки в Facebook. Используется Unicode символ U+0336.
+    </div>
+  </div>
+
+  <script>
+    const input = document.getElementById('input');
+    const output = document.getElementById('output');
+    const copyBtn = document.getElementById('copyBtn');
+
+    // Функция для создания зачеркнутого текста
+    function createStrikethrough(text) {
+      return text.split('').map(char => char + '\u0336').join('');
+    }
+
+    // Обновление зачеркнутого текста при вводе
+    input.addEventListener('input', () => {
+      const text = input.value;
+      output.value = createStrikethrough(text);
+    });
+
+    // Копирование в буфер обмена
+    copyBtn.addEventListener('click', async () => {
+      const text = output.value;
+      
+      if (!text) {
+        alert('Нет текста для копирования');
+        return;
+      }
+
+      try {
+        await navigator.clipboard.writeText(text);
+        copyBtn.textContent = 'Скопировано!';
+        copyBtn.classList.add('copied');
+        
+        setTimeout(() => {
+          copyBtn.textContent = 'Копировать';
+          copyBtn.classList.remove('copied');
+        }, 2000);
+      } catch (err) {
+        // Fallback для старых браузеров
+        output.select();
+        document.execCommand('copy');
+        copyBtn.textContent = 'Скопировано!';
+        copyBtn.classList.add('copied');
+        
+        setTimeout(() => {
+          copyBtn.textContent = 'Копировать';
+          copyBtn.classList.remove('copied');
+        }, 2000);
+      }
+    });
+  </script>
+</body>
+</html>
+

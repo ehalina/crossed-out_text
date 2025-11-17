@@ -1,0 +1,85 @@
+CHROME WEB STORE - PRIVACY FORM TEXT
+=====================================
+
+SINGLE PURPOSE (Единая цель расширения)
+----------------------------------------
+This extension has a single, narrow purpose: to insert strikethrough text into Facebook posts using Unicode character U+0336 (Combining Long Stroke Overlay). The extension provides a quick way to format text with strikethrough effect in Facebook's post creation interface through keyboard shortcuts or popup interface. All functionality is focused solely on this text formatting feature for Facebook posts.
+
+PRIVACY POLICY INFORMATION
+---------------------------
+
+1. Does your extension collect, use, or share user data?
+   Answer: NO
+
+2. Does your extension collect, use, or share user data with third parties?
+   Answer: NO
+
+3. Does your extension use remote hosting?
+   Answer: NO
+
+4. Does your extension use inline installation?
+   Answer: NO
+
+5. Does your extension use OAuth or other authentication?
+   Answer: NO
+
+6. Does your extension use biometric data?
+   Answer: NO
+
+7. Does your extension use location data?
+   Answer: NO
+
+8. Does your extension use personal communications?
+   Answer: NO
+
+9. Does your extension use web history?
+   Answer: NO
+
+10. Does your extension use activity on other websites?
+    Answer: NO
+
+DETAILED PRIVACY INFORMATION
+------------------------------
+
+Data Collection:
+- This extension does NOT collect, store, or transmit any user data
+- All operations are performed locally in the user's browser
+- No data is sent to external servers
+- No analytics or tracking is implemented
+
+Permissions Used:
+- activeTab: Required to work on the active Facebook tab
+- scripting: Required to insert text into Facebook's contenteditable fields
+- host_permissions (facebook.com only): Required to access Facebook pages where the extension operates
+
+Technology Used:
+- The extension uses Unicode character U+0336 (Combining Long Stroke Overlay) for strikethrough formatting
+- Text insertion is done through standard browser APIs (execCommand, DOM manipulation)
+- No external scripts or libraries are loaded
+- No network requests are made
+
+User Data:
+- Text entered by the user is processed only locally
+- Text is inserted directly into Facebook's input fields
+- No text is stored, logged, or transmitted
+- No user identification or tracking occurs
+
+Third-Party Services:
+- This extension does not use any third-party services
+- No data is shared with third parties
+- No external APIs are called
+
+Storage:
+- This extension does not use browser storage (localStorage, chrome.storage, etc.)
+- No persistent data is saved
+- All operations are performed in memory only
+
+PRIVACY POLICY URL
+------------------
+[Укажите URL вашей privacy-policy.html после загрузки на хостинг]
+
+Пример: https://your-username.github.io/facebook-strikethrough/privacy-policy.html
+
+Или используйте другой публичный хостинг (Netlify, Vercel, etc.)
+
+
